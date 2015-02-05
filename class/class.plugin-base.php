@@ -35,7 +35,7 @@ if (!class_exists('plugin_base')) :
 			This is so you can then access variables if needed in activation of plugin.
 			Like if you need to access the variable $sessions_needed you can then call $plugin_base->sessions_needed
 			*/
-			$plugin_base = new plugin_base; 
+			$plugin_base = new plugin_base(); 
 
 		}
 		
@@ -44,7 +44,7 @@ if (!class_exists('plugin_base')) :
 			This is so you can then access variables if needed in deactivation of plugin.
 			Like if you need to access the variable $sessions_needed you can then call $plugin_base->sessions_needed
 			*/
-			$plugin_base = new plugin_base;
+			$plugin_base = new plugin_base();
 			
 		}
 		public function init() {
