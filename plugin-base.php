@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Plugin Base Sample
-Plugin URI: http://www.wp-411.com
+Plugin URI: http://wpcms.ninja
 Description: Plugin template for having a good starting point to build your custom plugin or application.
 Author: Greg Whitehead
 Version: 1.1
