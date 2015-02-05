@@ -20,6 +20,9 @@ if (!class_exists('plugin_base')) :
 			$this->sessions_needed = true;	
 			$this->access_level = "manage_options";
 			
+			register_activation_hook(__FILE__, array(&$this,'activate'));
+			register_deactivation_hook(__FILE__,array(&$this,'deactivate'));
+
 			add_action('init', array(&$this, 'init'));
 			
 			add_action('admin_init', array(&$this, 'admin_init'));
@@ -28,10 +31,20 @@ if (!class_exists('plugin_base')) :
 		}
 		
 		public static function activate() {
-			
+			/*
+			This is so you can then access variables if needed in activation of plugin.
+			Like if you need to access the variable $sessions_needed you can then call $plugin_base->sessions_needed
+			*/
+			$plugin_base = new plugin_base; 
+
 		}
 		
 		public static function deactivate() {
+			/*
+			This is so you can then access variables if needed in deactivation of plugin.
+			Like if you need to access the variable $sessions_needed you can then call $plugin_base->sessions_needed
+			*/
+			$plugin_base = new plugin_base;
 			
 		}
 		public function init() {
@@ -59,6 +72,10 @@ if (!class_exists('plugin_base')) :
 		
 		public function init_settings() {
 			//customized init settings for entire program backend and front end
+		}
+		
+		public function update_options() {
+			
 		}
 		
 		public function add_menu() {
@@ -90,24 +107,101 @@ if (!class_exists('plugin_base')) :
 		public function settings_page() {
 			$this->check_user();
 			//if passed then display following code to user
-			
-			$this->add_error_msg("Test Error Message");
+?>
+    <!-- Create a header in the default WordPress 'wrap' container -->
+    <div class="wrap">
+<?php			
+			//$this->add_error_msg("Test Error Message");
 			echo "<h1>Plugin Base Settings Page</h2>";
 			$this->disp_errors();
+?>
+</div>
+<?php
 			
 		}
 		
 		public function sample_page() {
 			$this->check_user();
 			//if passed then display following code to user
+?>
+    <!-- Create a header in the default WordPress 'wrap' container -->
+    <div class="wrap">
+<?php			
 
 			echo "<h1>Plugin Base 2nd Page</h2>";
 			$this->disp_errors();
+?>
+</div>
+<?php
 			
 		}
 		
-
+		public function initialize_settings_options() {
+			
+			// First, we register a section. This is necessary since all future options must belong to a 
+				add_settings_section(
+					'general_settings_section',         // ID used to identify this section and with which to register options
+					'Sandbox Options',                  // Title to be displayed on the administration page
+					array(&$this, 'general_options_callback'), // Callback used to render the description of the section
+					'pluginbase-settings'                           // Page on which to add this section of options
+				);
+				 
+				// Next, we'll introduce the fields for toggling the visibility of content elements.
+				add_settings_field( 
+					'show_header',                      // ID used to identify the field throughout the theme
+					'Header',                           // The label to the left of the option interface element
+					array(&$this, 'sandbox_toggle_header_callback'),   // The name of the function responsible for rendering the option interface
+					'pluginbase-settings',                          // The page on which this option will be displayed
+					'general_settings_section',         // The name of the section to which this field belongs
+					array(                              // The array of arguments to pass to the callback. In this case, just a description.
+						'Activate this setting to display the header.'
+					)
+				);
+				 
+				register_setting(
+					'pluginbase-settings',
+					'show_header'
+				);
+				 
+				/*register_setting(
+					'pluginbase-settings',
+					'pluginbase-settings'
+				);	*/			
+							
+		}
 		
+		function sandbox_toggle_header_callback($args) {
+		 
+			$options = get_option('sandbox_theme_display_options');
+		 
+			$html = '<input type="checkbox" id="show_header" name="sandbox_theme_display_options[show_header]" value="1" ' . checked(1, $options['show_header'], false) . '/>'; 
+			$html .= '<label for="show_header"> '  . $args[0] . '</label>'; 
+		 
+			echo $html;
+		 
+		} // end sandbox_toggle_header_callback
+		 
+		function general_options_callback() {
+			echo '<p>Select which areas of content you wish to display.</p>';
+		} // end sandbox_general_options_callback
+		 
+		/* ------------------------------------------------------------------------ *
+		 * Field Callbacks
+		 * ------------------------------------------------------------------------ */
+		 
+		function toggle_header_callback($args) {
+			 
+			// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
+			$html = '<input type="checkbox" id="show_header" name="show_header" value="1" ' . checked(1, get_option('show_header'), false) . '/>'; 
+			 
+			// Here, we'll take the first argument of the array and add it to a label next to the checkbox
+			$html .= '<label for="show_header"> '  . $args[0] . '</label>'; 
+			 
+			echo $html;
+			 
+		} // end sandbox_toggle_header_callback
+		 
+
 		/* 
 		 * The check_user function checks to see if they have sufficient permissions
 		 * and if not then displays error message and does a wp_die.
@@ -124,19 +218,10 @@ if (!class_exists('plugin_base')) :
 			/*		Sample $variableSql data
 			
 					  `id` int(11) NOT NULL AUTO_INCREMENT,
-					  `ip` varchar(64) NOT NULL,
-					  `phpsessid` varchar(64) NOT NULL,
-					  `entireurl` text NOT NULL,
-					  `querystring` text NOT NULL,
-					  `q` text NOT NULL,
-					  `referrer` text NOT NULL,
-					  `landingpage` text NOT NULL,
-					  `utmcmd` text NOT NULL,
-					  `utmctr` text NOT NULL,
-					  `dataarray` text NOT NULL,
-					  `httpcookie` text NOT NULL,
-					  `pagecount` int(11) NOT NULL DEFAULT '1',
-					  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					  `varcharexample` varchar(64) NOT NULL,
+					  `textexample` text NOT NULL,
+					  `intexample` int(11) NOT NULL DEFAULT '',
+					  `timestampexample` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					  UNIQUE ( `id` )
 			*/
 			if ($variableSql != '') {

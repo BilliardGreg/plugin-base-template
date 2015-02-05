@@ -20,8 +20,5 @@ define( $plugin_prefix.'_PATH', plugin_dir_path( __FILE__) );
 include("class/class.plugin-base.php");
 
 if (class_exists('plugin_base')) {
-	register_activation_hook(__FILE__, array('plugin_base','activate'));
-	register_deactivation_hook(__FILE__,array('plugin_base','deactivate'));
-	
 	$plugin_base = new plugin_base();	
 }
