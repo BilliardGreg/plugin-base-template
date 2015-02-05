@@ -6,16 +6,11 @@ if (!class_exists('plugin_base')) :
 		
 		//declaring different variables needed for class
 		public $sessions_needed;
-		private $db;
 		private $definitions = array();
 		private $error = array();
 		private $access_level;
 		
 		public function __construct() {
-			global $wpdb;
-			
-			$this->db = $wpdb;
-			
 			//place to set initial settings for plugin
 			$this->sessions_needed = true;	
 			$this->access_level = "manage_options";
@@ -224,9 +219,11 @@ if (!class_exists('plugin_base')) :
 					  `timestampexample` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					  UNIQUE ( `id` )
 			*/
+			global $wpdb;
+
 			if ($variableSql != '') {
 				$sql = "CREATE TABLE IF NOT EXISTS `".$tablename."` ( ".$variableSql.");";
-				$this->db->query($sql);
+				$wpdb->query($sql);
 				return true;
 			}
 			
@@ -234,8 +231,9 @@ if (!class_exists('plugin_base')) :
 		}
 		
 		private function drop_table($tablename) {
+			global $wpdb;
 			$sql = 	"DROP TABLE IF EXISTS " . $tablename;
-			if ($this->db->query($sql)) 
+			if ($wpdb->query($sql)) 
 				return true;			
 			return false;	
 		}
